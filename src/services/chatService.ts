@@ -148,6 +148,10 @@ export async function generateQuizDescription(
     )}`;
   }
 
+  const prompt = `En 2-3 phrases, écris une recommandation personnalisée pour ${recommendation}. Mentionne: ${reasons.join(
+    ", ",
+  )}.`;
+
   if (useServerProxy) {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -175,10 +179,6 @@ export async function generateQuizDescription(
       )}`
     );
   }
-
-  const prompt = `En 2-3 phrases, écris une recommandation personnalisée pour ${recommendation}. Mentionne: ${reasons.join(
-    ", ",
-  )}.`;
 
   const payload = {
     model,
