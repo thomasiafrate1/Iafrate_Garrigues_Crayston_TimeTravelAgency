@@ -1,11 +1,13 @@
-import { motion } from "framer-motion";
+import { cubicBezier, motion } from "framer-motion";
 import DestinationCard from "../components/DestinationCard";
 import { destinations } from "../data/destinations";
+
+const easeOut = cubicBezier(0.16, 1, 0.3, 1);
 
 const fadeIn = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: "easeOut" },
+  transition: { duration: 0.7, ease: easeOut },
   viewport: { once: true, amount: 0.2 },
 };
 

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, cubicBezier, motion } from "framer-motion";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -10,9 +10,15 @@ import Booking from "./pages/Booking";
 import QuizPage from "./pages/QuizPage";
 import About from "./pages/About";
 
+const easeOut = cubicBezier(0.16, 1, 0.3, 1);
+
 const pageVariants = {
   initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: easeOut },
+  },
   exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
 };
 
