@@ -14,7 +14,9 @@ const apiKey = import.meta.env.VITE_API_KEY || "";
 const model =
   import.meta.env.VITE_LLM_MODEL || "openai/gpt-4o-mini";
 
-const isDemo = provider === "demo" || !apiKey;
+const isDemo = provider === "demo";
+const useServerProxy =
+  provider === "openrouter" && (import.meta.env.PROD || !apiKey);
 
 const sanitize = (message: string) =>
   message.trim().slice(0, MAX_MESSAGE_CHARS);
@@ -79,6 +81,24 @@ export async function sendChatMessage(messages: ChatMessage[]) {
     );
   }
 
+  if (useServerProxy) {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: sanitizedMessages,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Impossible de contacter l'agent.");
+    }
+
+    const data = (await response.json()) as { content?: string };
+    return data.content ?? "Je suis là pour vous.";
+  }
+
   const payload = {
     model,
     messages: [
@@ -126,6 +146,34 @@ export async function generateQuizDescription(
     return `Votre profil correspond parfaitement à ${recommendation}. ${reasons.join(
       " ",
     )}`;
+  }
+
+  if (useServerProxy) {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: prompt },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      return `Votre profil correspond parfaitement à ${recommendation}. ${reasons.join(
+        " ",
+      )}`;
+    }
+
+    const data = (await response.json()) as { content?: string };
+    return (
+      data.content ??
+      `Votre profil correspond parfaitement à ${recommendation}. ${reasons.join(
+        " ",
+      )}`
+    );
   }
 
   const prompt = `En 2-3 phrases, écris une recommandation personnalisée pour ${recommendation}. Mentionne: ${reasons.join(

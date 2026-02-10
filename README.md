@@ -35,7 +35,12 @@ Créer un fichier `.env` (basé sur `.env.example`).
 VITE_LLM_PROVIDER=demo
 VITE_API_KEY=your_api_key_here
 VITE_LLM_MODEL=openai/gpt-4o-mini
+OPENROUTER_API_KEY=your_server_key_here
 ```
+
+## Déploiement (Vercel)
+- Configure `OPENROUTER_API_KEY` côté serveur (Environment Variables Vercel).
+- Le frontend appelle `/api/chat`, qui relaie la requête vers OpenRouter.
 
 ## Structure
 - `src/components` : Header, Footer, Hero, DestinationCard, ChatWidget, Quiz, BookingForm
